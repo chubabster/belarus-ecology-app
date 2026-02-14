@@ -298,3 +298,70 @@ router.post('/:id/vote', async (req, res) => {
 });
 
 module.exports = router;
+
+// PUT /api/ideas/:id - Обновление идеи (для админки)
+router.put('/:id', async (req, res) => {
+  const { id } = req.params;
+  const { status, title, description, category } = req.body;
+  
+  try {
+    // Формируем динамический запрос обновления
+    const updates = [];
+    const values = [];
+    let paramIndex = 1;
+    
+    if (status) {
+      updates.push(`status = $${paramIndex++}`);
+      values.push(status);
+    }
+    if (title) {
+      updates.push(`title = $${paramIndex++}`);
+      values.push(title);
+    }
+    if (description) {
+      updates.push(`description = $${paramIndex++}`);
+      values.push(description);
+    }
+    if (category) {
+      updates.push(`category = $${paramIndex++}`);
+      values.push(category);
+    }
+    
+    if (updates.length === 0) {
+      return res.status(400).json({
+        success: false,
+        error: 'Нет данных для обновления'
+      });
+    }
+    
+    values.push(id);
+    
+    const result = await pool.query(
+      `UPDATE ideas 
+       SET ${updates.join(', ')}, updated_at = CURRENT_TIMESTAMP
+       WHERE id = $${paramIndex}
+       RETURNING *`,
+      values
+    );
+    
+    if (result.rows.length === 0) {
+      return res.status(404).json({
+        success: false,
+        error: 'Идея не найдена'
+      });
+    }
+    
+    res.json({
+      success: true,
+      data: result.rows[0],
+      message: 'Идея успешно обновлена'
+    });
+  } catch (error) {
+    console.error('Ошибка при обновлении идеи:', error);
+    res.status(500).json({
+      success: false,
+      error: 'Ошибка при обновлении идеи',
+      details: error.message
+    });
+  }
+});

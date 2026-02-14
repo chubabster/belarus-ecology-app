@@ -149,29 +149,38 @@ const API = {
    * @param {Object} updateData - Данные для обновления
    * @returns {Promise<Object>}
    */
-  async updateIdea(id, updateData) {
-    try {
-      const response = await fetch(`${API_BASE_URL}/ideas/${id}`, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(updateData),
-      });
-      
-      const data = await response.json();
-      
-      if (!data.success) {
-        throw new Error(data.error);
-      }
-      
-      return data.data;
-    } catch (error) {
-      console.error('Ошибка при обновлении идеи:', error);
-      throw error;
+// Обновить идею (для админки)
+  async updateIdea(id, data) {
+    const response = await fetch(`${API_BASE_URL}/ideas/${id}`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(data),
+    });
+    
+    if (!response.ok) {
+      throw new Error('Ошибка при обновлении идеи');
     }
+    
+    return response.json();
   },
-
+// Создать новую проблему (для админки)
+  async createProblem(data) {
+    const response = await fetch(`${API_BASE_URL}/problems`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(data),
+    });
+    
+    if (!response.ok) {
+      throw new Error('Ошибка при создании проблемы');
+    }
+    
+    return response.json();
+  },
   /**
    * Удалить идею
    * @param {number} id - ID идеи
@@ -220,6 +229,7 @@ const API = {
     }
   },
 };
+
 
 // Экспортируем API
 window.API = API;
