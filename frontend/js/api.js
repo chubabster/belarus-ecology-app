@@ -1,7 +1,7 @@
 // js/api.js
 // Модуль для взаимодействия с REST API
 
-const API_BASE_URL = 'https://belarus-ecology-backend.onrender.com';
+const API_BASE_URL = 'https://belarus-ecology-backend.onrender.com/api';
 
 /**
  * API клиент для работы с бэкендом
