@@ -25,23 +25,15 @@ document.addEventListener('DOMContentLoaded', async () => {
   console.log('✅ DOM загружен, начинаем инициализацию...');
   console.log('🌍 Приложение "Экология Беларуси" загружается...');
   
-  // Проверяем наличие API
   if (typeof API === 'undefined') {
     console.error('❌ API не загружен! Проверьте что api.js подключен перед app.js');
     return;
   }
   console.log('✅ API доступен');
   
-  // Инициализация навигации
   initNavigation();
-  
-  // Инициализация модальных окон
   initModals();
-  
-  // Загрузка данных
   await loadAllData();
-  
-  // Инициализация фильтров
   initFilters();
   
   console.log('✅ Приложение готово к работе!');
@@ -56,7 +48,6 @@ function initNavigation() {
   navLinks.forEach(link => {
     link.addEventListener('click', (e) => {
       e.preventDefault();
-      
       navLinks.forEach(l => l.classList.remove('active'));
       link.classList.add('active');
       
@@ -77,7 +68,6 @@ function initNavigation() {
 function initModals() {
   console.log('🔧 Начало инициализации модальных окон...');
   
-  // Получаем элементы
   const addIdeaBtn = document.getElementById('addIdeaBtn');
   const ideaModal = document.getElementById('ideaModal');
   const modalOverlay = document.getElementById('modalOverlay');
@@ -85,33 +75,19 @@ function initModals() {
   const cancelBtn = document.getElementById('cancelBtn');
   const ideaForm = document.getElementById('ideaForm');
   
-  // Подробная диагностика
-  console.log('Проверка элементов:');
-  console.log('  addIdeaBtn:', addIdeaBtn ? '✅ найдена' : '❌ не найдена');
-  console.log('  ideaModal:', ideaModal ? '✅ найдено' : '❌ не найдено');
-  console.log('  modalOverlay:', modalOverlay ? '✅ найден' : '❌ не найден');
-  console.log('  modalClose:', modalClose ? '✅ найдена' : '❌ не найдена');
-  console.log('  cancelBtn:', cancelBtn ? '✅ найдена' : '❌ не найдена');
-  console.log('  ideaForm:', ideaForm ? '✅ найдена' : '❌ не найдена');
-  
   if (!addIdeaBtn || !ideaModal) {
     console.error('❌ КРИТИЧЕСКАЯ ОШИБКА: Основные элементы модального окна не найдены!');
-    console.error('Проверьте что в HTML есть:');
-    console.error('  <button id="addIdeaBtn">');
-    console.error('  <div id="ideaModal">');
     return;
   }
   
   console.log('✅ Все элементы найдены, настраиваем обработчики...');
   
-  // Функция открытия модального окна
   const openModal = () => {
     console.log('🔓 ОТКРЫТИЕ модального окна');
     ideaModal.classList.add('active');
     document.body.style.overflow = 'hidden';
   };
   
-  // Функция закрытия модального окна
   const closeModal = () => {
     console.log('🔒 ЗАКРЫТИЕ модального окна');
     ideaModal.classList.remove('active');
@@ -119,53 +95,30 @@ function initModals() {
     if (ideaForm) ideaForm.reset();
   };
   
-  // Обработчик кнопки "Добавить идею"
   addIdeaBtn.addEventListener('click', (e) => {
     e.preventDefault();
     console.log('👆 КЛИК по кнопке "Добавить идею"');
     openModal();
   });
   
-  // Обработчик закрытия
-  if (modalOverlay) {
-    modalOverlay.addEventListener('click', () => {
-      console.log('👆 Клик по overlay');
-      closeModal();
-    });
-  }
+  if (modalOverlay) modalOverlay.addEventListener('click', closeModal);
+  if (modalClose) modalClose.addEventListener('click', closeModal);
+  if (cancelBtn) cancelBtn.addEventListener('click', closeModal);
   
-  if (modalClose) {
-    modalClose.addEventListener('click', () => {
-      console.log('👆 Клик по кнопке закрытия');
-      closeModal();
-    });
-  }
-  
-  if (cancelBtn) {
-    cancelBtn.addEventListener('click', () => {
-      console.log('👆 Клик по кнопке "Отмена"');
-      closeModal();
-    });
-  }
-  
-  // Закрытие по Escape
   document.addEventListener('keydown', (e) => {
     if (e.key === 'Escape' && ideaModal.classList.contains('active')) {
-      console.log('⌨️ Нажата клавиша Escape');
       closeModal();
     }
   });
   
-  // Обработчик отправки формы
   if (ideaForm) {
     ideaForm.addEventListener('submit', async (e) => {
       e.preventDefault();
-      console.log('📝 Отправка формы');
       await handleIdeaSubmit(e);
     });
   }
   
-  // Инициализация модального окна для проблем
+  // Модальное окно для проблем
   const problemModal = document.getElementById('problemModal');
   const problemModalOverlay = document.getElementById('problemModalOverlay');
   const problemModalClose = document.getElementById('problemModalClose');
@@ -177,13 +130,8 @@ function initModals() {
     }
   };
   
-  if (problemModalOverlay) {
-    problemModalOverlay.addEventListener('click', closeProblemModal);
-  }
-  
-  if (problemModalClose) {
-    problemModalClose.addEventListener('click', closeProblemModal);
-  }
+  if (problemModalOverlay) problemModalOverlay.addEventListener('click', closeProblemModal);
+  if (problemModalClose) problemModalClose.addEventListener('click', closeProblemModal);
   
   console.log('✅ Модальные окна полностью инициализированы!');
 }
@@ -194,13 +142,10 @@ function initModals() {
 async function loadAllData() {
   try {
     console.log('📥 Загрузка данных из API...');
-    
     await loadProblems();
     await loadSolutions();
     await loadIdeas();
-    
     updateStats();
-    
     console.log('✅ Все данные загружены');
   } catch (error) {
     console.error('❌ Ошибка при загрузке данных:', error);
@@ -208,9 +153,6 @@ async function loadAllData() {
   }
 }
 
-/**
- * Загрузка проблем
- */
 async function loadProblems(category = 'all') {
   try {
     const filters = category === 'all' ? {} : { category };
@@ -219,23 +161,16 @@ async function loadProblems(category = 'all') {
   } catch (error) {
     console.error('❌ Ошибка при загрузке проблем:', error);
     document.getElementById('problemsGrid').innerHTML = 
-      '<p class="error-message">Ошибка при загрузке проблем. Проверьте что backend сервер запущен.</p>';
+      '<p class="error-message">Ошибка при загрузке проблем.</p>';
   }
 }
 
-/**
- * Отрисовка проблем
- */
 function renderProblems(problems) {
   const grid = document.getElementById('problemsGrid');
-  
-  if (!grid) {
-    console.error('❌ Элемент problemsGrid не найден');
-    return;
-  }
+  if (!grid) return;
   
   if (problems.length === 0) {
-    grid.innerHTML = '<p class="empty-message">Проблемы не найдены. Добавьте их через API или SQL.</p>';
+    grid.innerHTML = '<p class="empty-message">Проблемы не найдены.</p>';
     return;
   }
   
@@ -255,12 +190,8 @@ function renderProblems(problems) {
   `).join('');
 }
 
-/**
- * Показать детали проблемы
- */
 async function showProblemDetails(problemId) {
   try {
-    console.log('📖 Показываем детали проблемы:', problemId);
     const problem = await API.getProblemById(problemId);
     const solutions = await API.getSolutionsForProblem(problemId);
     
@@ -278,7 +209,6 @@ async function showProblemDetails(problemId) {
         <p class="problem-description" style="margin-top: 1.5rem; -webkit-line-clamp: unset;">
           ${problem.description}
         </p>
-        
         ${solutions.length > 0 ? `
           <div style="margin-top: 2rem;">
             <h3 style="font-family: var(--font-display); font-size: 1.5rem; margin-bottom: 1rem;">
@@ -312,9 +242,6 @@ async function showProblemDetails(problemId) {
   }
 }
 
-/**
- * Загрузка решений
- */
 async function loadSolutions(filters = {}) {
   try {
     AppState.solutions = await API.getSolutions(filters);
@@ -326,16 +253,12 @@ async function loadSolutions(filters = {}) {
   }
 }
 
-/**
- * Отрисовка решений
- */
 function renderSolutions(solutions) {
   const list = document.getElementById('solutionsList');
-  
   if (!list) return;
   
   if (solutions.length === 0) {
-    list.innerHTML = '<p class="empty-message">Решения не найдены. Добавьте их через API.</p>';
+    list.innerHTML = '<p class="empty-message">Решения не найдены.</p>';
     return;
   }
   
@@ -354,9 +277,6 @@ function renderSolutions(solutions) {
   `).join('');
 }
 
-/**
- * Загрузка идей
- */
 async function loadIdeas(params = {}) {
   try {
     AppState.ideas = await API.getIdeas(params);
@@ -369,11 +289,10 @@ async function loadIdeas(params = {}) {
 }
 
 /**
- * Отрисовка идей
+ * Отрисовка идей С ОГРАНИЧЕНИЕМ ГОЛОСОВАНИЯ
  */
 function renderIdeas(ideas) {
   const grid = document.getElementById('ideasGrid');
-  
   if (!grid) return;
   
   if (ideas.length === 0) {
@@ -381,7 +300,13 @@ function renderIdeas(ideas) {
     return;
   }
   
-  grid.innerHTML = ideas.map(idea => `
+  // Получаем список проголосованных идей из localStorage
+  const votedIdeas = JSON.parse(localStorage.getItem('votedIdeas') || '[]');
+  
+  grid.innerHTML = ideas.map(idea => {
+    const hasVoted = votedIdeas.includes(idea.id);
+    
+    return `
     <div class="idea-card">
       <div class="idea-header">
         <span class="idea-author">👤 ${idea.author_name}</span>
@@ -392,23 +317,20 @@ function renderIdeas(ideas) {
       <p class="idea-description">${idea.description}</p>
       <div class="idea-footer">
         <div class="idea-votes">
-          <button class="vote-btn" onclick="handleVote(${idea.id})">
-            <span>👍</span>
-            <span>Поддержать</span>
+          <button class="vote-btn ${hasVoted ? 'voted' : ''}" 
+                  onclick="handleVote(${idea.id})"
+                  ${hasVoted ? 'disabled' : ''}>
+            <span>${hasVoted ? '✅' : '👍'}</span>
+            <span>${hasVoted ? 'Вы поддержали' : 'Поддержать'}</span>
           </button>
           <span class="vote-count">${idea.votes} ${pluralize(idea.votes, ['голос', 'голоса', 'голосов'])}</span>
         </div>
       </div>
     </div>
-  `).join('');
+  `}).join('');
 }
 
-/**
- * Обработка отправки идеи
- */
 async function handleIdeaSubmit(e) {
-  console.log('📤 Обработка отправки формы идеи');
-  
   const submitBtn = e.target.querySelector('button[type="submit"]');
   const originalText = submitBtn.textContent;
   
@@ -423,30 +345,19 @@ async function handleIdeaSubmit(e) {
       category: document.getElementById('ideaCategory').value,
     };
     
-    console.log('Данные формы:', formData);
-    
     await API.createIdea(formData);
     
-    console.log('✅ Идея успешно создана');
-    
-    // Закрываем модальное окно
     document.getElementById('ideaModal').classList.remove('active');
     document.body.style.overflow = 'auto';
-    
-    // Очищаем форму
     e.target.reset();
     
-    // Перезагружаем идеи
     await loadIdeas(getCurrentIdeaFilters());
-    
-    // Обновляем статистику
     updateStats();
     
-    // Показываем уведомление
     showNotification('Спасибо! Ваша идея успешно добавлена', 'success');
   } catch (error) {
     console.error('❌ Ошибка при отправке идеи:', error);
-    showNotification('Ошибка при отправке идеи. Проверьте что backend сервер запущен.', 'error');
+    showNotification('Ошибка при отправке идеи', 'error');
   } finally {
     submitBtn.disabled = false;
     submitBtn.textContent = originalText;
@@ -454,15 +365,26 @@ async function handleIdeaSubmit(e) {
 }
 
 /**
- * Обработка голосования за идею
+ * ГЛАВНАЯ ФУНКЦИЯ - Обработка голосования С ОГРАНИЧЕНИЕМ!
  */
 async function handleVote(ideaId) {
+  // Проверяем голосовал ли уже пользователь
+  const votedIdeas = JSON.parse(localStorage.getItem('votedIdeas') || '[]');
+  
+  if (votedIdeas.includes(ideaId)) {
+    showNotification('Вы уже проголосовали за эту идею!', 'error');
+    return;
+  }
+  
   try {
     console.log('👍 Голосуем за идею:', ideaId);
     await API.voteForIdea(ideaId);
     
-    await loadIdeas(getCurrentIdeaFilters());
+    // Сохраняем что проголосовали
+    votedIdeas.push(ideaId);
+    localStorage.setItem('votedIdeas', JSON.stringify(votedIdeas));
     
+    await loadIdeas(getCurrentIdeaFilters());
     showNotification('Голос учтён!', 'success');
   } catch (error) {
     console.error('❌ Ошибка при голосовании:', error);
@@ -470,11 +392,7 @@ async function handleVote(ideaId) {
   }
 }
 
-/**
- * Инициализация фильтров
- */
 function initFilters() {
-  // Фильтры проблем
   const problemFilters = document.querySelectorAll('.filter-btn');
   problemFilters.forEach(btn => {
     btn.addEventListener('click', async () => {
@@ -487,7 +405,6 @@ function initFilters() {
     });
   });
   
-  // Фильтры решений
   const levelFilter = document.getElementById('levelFilter');
   const difficultyFilter = document.getElementById('difficultyFilter');
   const impactFilter = document.getElementById('impactFilter');
@@ -500,17 +417,14 @@ function initFilters() {
           difficulty: difficultyFilter.value,
           impact: impactFilter.value,
         };
-        
         Object.keys(filters).forEach(key => {
           if (!filters[key]) delete filters[key];
         });
-        
         await loadSolutions(filters);
       });
     }
   });
   
-  // Фильтры идей
   const ideaCategoryFilter = document.getElementById('ideaCategoryFilter');
   const ideaSortFilter = document.getElementById('ideaSortFilter');
   
@@ -521,13 +435,8 @@ function initFilters() {
       });
     }
   });
-  
-  console.log('✅ Фильтры инициализированы');
 }
 
-/**
- * Получить текущие фильтры идей
- */
 function getCurrentIdeaFilters() {
   const categoryFilter = document.getElementById('ideaCategoryFilter');
   const sortFilter = document.getElementById('ideaSortFilter');
@@ -535,21 +444,12 @@ function getCurrentIdeaFilters() {
   const category = categoryFilter ? categoryFilter.value : '';
   const sort = sortFilter ? sortFilter.value : 'date';
   
-  const filters = {
-    sort,
-    order: 'desc',
-  };
-  
-  if (category) {
-    filters.category = category;
-  }
+  const filters = { sort, order: 'desc' };
+  if (category) filters.category = category;
   
   return filters;
 }
 
-/**
- * Обновление статистики
- */
 function updateStats() {
   const problemsCount = document.getElementById('problemsCount');
   const solutionsCount = document.getElementById('solutionsCount');
@@ -560,14 +460,10 @@ function updateStats() {
   if (ideasCount) animateCounter(ideasCount, AppState.ideas.length);
 }
 
-/**
- * Анимация счётчика
- */
 function animateCounter(element, target) {
   const duration = 1000;
-  const start = 0;
   const increment = target / (duration / 16);
-  let current = start;
+  let current = 0;
   
   const timer = setInterval(() => {
     current += increment;
@@ -580,9 +476,6 @@ function animateCounter(element, target) {
   }, 16);
 }
 
-/**
- * Форматирование даты
- */
 function formatDate(dateString) {
   const date = new Date(dateString);
   const now = new Date();
@@ -603,17 +496,11 @@ function formatDate(dateString) {
   });
 }
 
-/**
- * Плюрализация
- */
 function pluralize(number, forms) {
   const cases = [2, 0, 1, 1, 1, 2];
   return forms[(number % 100 > 4 && number % 100 < 20) ? 2 : cases[Math.min(number % 10, 5)]];
 }
 
-/**
- * Получить цвет категории
- */
 function getCategoryColor(category) {
   const colors = {
     'Вода': '#4a7c9e, #74c0e3',
@@ -626,9 +513,6 @@ function getCategoryColor(category) {
   return colors[category] || '#52b788, #95d5b2';
 }
 
-/**
- * Показать уведомление
- */
 function showNotification(message, type = 'info') {
   const notification = document.createElement('div');
   notification.className = `notification notification-${type}`;
@@ -647,37 +531,23 @@ function showNotification(message, type = 'info') {
   `;
   
   document.body.appendChild(notification);
-  
-  setTimeout(() => {
-    notification.remove();
-  }, 3000);
+  setTimeout(() => notification.remove(), 3000);
 }
 
-/**
- * Показать ошибку
- */
 function showError(message) {
   showNotification(message, 'error');
 }
 
-// Добавляем CSS для анимации уведомлений
+// CSS для анимации и стилей
 const style = document.createElement('style');
 style.textContent = `
   @keyframes slideInRight {
-    from {
-      transform: translateX(400px);
-      opacity: 0;
-    }
-    to {
-      transform: translateX(0);
-      opacity: 1;
-    }
+    from { transform: translateX(400px); opacity: 0; }
+    to { transform: translateX(0); opacity: 1; }
   }
   
   @keyframes fadeOut {
-    to {
-      opacity: 0;
-    }
+    to { opacity: 0; }
   }
   
   .empty-message, .error-message {
@@ -690,10 +560,21 @@ style.textContent = `
   .error-message {
     color: var(--danger-red);
   }
+  
+  /* Стили для проголосованной кнопки */
+  .vote-btn.voted {
+    background: linear-gradient(135deg, #95d5b2, #d4a574) !important;
+    cursor: not-allowed;
+    opacity: 0.7;
+  }
+  
+  .vote-btn:disabled {
+    cursor: not-allowed;
+  }
 `;
 document.head.appendChild(style);
 
-// Экспортируем функции для глобального доступа
+// Экспорт функций
 window.showProblemDetails = showProblemDetails;
 window.handleVote = handleVote;
 

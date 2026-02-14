@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Админ-панель | Экология Беларуси</title>
+  <link rel="stylesheet" href="css/styles.css">
+  <style>
+    .admin-container {
+      max-width: 1200px;
+      margin: 100px auto;
+      padding: 2rem;
+    }
+    
+    .idea-admin-card {
+      background: white;
+      padding: 2rem;
+      margin-bottom: 1.5rem;
+      border-radius: 20px;
+      box-shadow: 0 2px 20px rgba(26, 61, 46, 0.08);
+    }
+    
+    .admin-actions {
+      display: flex;
+      gap: 1rem;
+      margin-top: 1rem;
+    }
+    
+    .btn-approve {
+      padding: 0.75rem 1.5rem;
+      background: var(--meadow-green);
+      color: white;
+      border: none;
+      border-radius: 50px;
+      cursor: pointer;
+      font-weight: 600;
+    }
+    
+    .btn-reject {
+      padding: 0.75rem 1.5rem;
+      background: var(--danger-red);
+      color: white;
+      border: none;
+      border-radius: 50px;
+      cursor: pointer;
+      font-weight: 600;
+    }
+    
+    .btn-convert {
+      padding: 0.75rem 1.5rem;
+      background: var(--lake-blue);
+      color: white;
+      border: none;
+      border-radius: 50px;
+      cursor: pointer;
+      font-weight: 600;
+    }
+  </style>
+</head>
+<body>
+  <div class="admin-container">
+    <h1 style="font-family: var(--font-display); font-size: 2.5rem; margin-bottom: 2rem;">
+      Админ-панель - Модерация идей
+    </h1>
+    
+    <div id="ideasList"></div>
+  </div>
+
+  <script src="js/api.js"></script>
+  <script>
+    async function loadIdeas() {
+      try {
+        const ideas = await API.getIdeas({ sort: 'date', order: 'desc' });
+        renderIdeas(ideas);
+      } catch (error) {
+        console.error('Ошибка загрузки идей:', error);
+      }
+    }
+    
+    function renderIdeas(ideas) {
+      const container = document.getElementById('ideasList');
+      
+      container.innerHTML = ideas.map(idea => `
+        <div class="idea-admin-card">
+          <h3>${idea.title}</h3>
+          <p><strong>Автор:</strong> ${idea.author_name}</p>
+          <p><strong>Категория:</strong> ${idea.category}</p>
+          <p><strong>Описание:</strong> ${idea.description}</p>
+          <p><strong>Голосов:</strong> ${idea.votes}</p>
+          <p><strong>Статус:</strong> ${idea.status}</p>
+          
+          <div class="admin-actions">
+            <button class="btn-approve" onclick="updateStatus(${idea.id}, 'одобрена')">
+              ✅ Одобрить
+            </button>
+            <button class="btn-reject" onclick="updateStatus(${idea.id}, 'отклонена')">
+              ❌ Отклонить
+            </button>
+            <button class="btn-convert" onclick="convertToProblem(${idea.id})">
+              🔄 Преобразовать в проблему
+            </button>
+          </div>
+        </div>
+      `).join('');
+    }
+    
+    async function updateStatus(ideaId, newStatus) {
+      try {
+        await API.updateIdea(ideaId, { status: newStatus });
+        alert(`Статус изменён на: ${newStatus}`);
+        loadIdeas();
+      } catch (error) {
+        console.error('Ошибка:', error);
+        alert('Ошибка при обновлении статуса');
+      }
+    }
+    
+    async function convertToProblem(ideaId) {
+      const idea = await API.getIdeas().then(ideas => ideas.find(i => i.id === ideaId));
+      
+      if (!idea) return;
+      
+      const severity = prompt('Уровень серьёзности (низкая/средняя/высокая/критическая):', 'средняя');
+      
+      if (!severity) return;
+      
+      try {
+        // Создаём проблему
+        const response = await fetch('${API_BASE_URL}/problems', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            title: idea.title,
+            description: idea.description,
+            category: idea.category,
+            severity: severity
+          })
+        });
+        
+        if (response.ok) {
+          // Обновляем статус идеи
+          await updateStatus(ideaId, 'реализована');
+          alert('Идея преобразована в проблему!');
+        }
+      } catch (error) {
+        console.error('Ошибка:', error);
+        alert('Ошибка при создании проблемы');
+      }
+    }
+    
+    loadIdeas();
+  </script>
+</body>
+</html>
