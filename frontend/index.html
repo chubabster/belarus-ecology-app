@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Экология Беларуси | Зелёное будущее</title>
+  <link rel="stylesheet" href="css/styles.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Manrope:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+  <!-- Навигация -->
+  <nav class="navbar">
+    <div class="nav-container">
+      <div class="nav-brand">
+        <svg class="logo-icon" viewBox="0 0 40 40" fill="none">
+          <circle cx="20" cy="20" r="18" stroke="currentColor" stroke-width="2"/>
+          <path d="M20 8 L20 32 M12 20 L28 20" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+          <path d="M14 12 Q20 16 26 12 M14 28 Q20 24 26 28" stroke="currentColor" stroke-width="1.5" fill="none"/>
+        </svg>
+        <span class="brand-text">ЭкоБеларусь</span>
+      </div>
+      <ul class="nav-menu">
+        <li><a href="#home" class="nav-link active">Главная</a></li>
+        <li><a href="#problems" class="nav-link">Проблемы</a></li>
+        <li><a href="#solutions" class="nav-link">Решения</a></li>
+        <li><a href="#ideas" class="nav-link">Идеи</a></li>
+      </ul>
+      <button class="add-idea-btn" id="addIdeaBtn">Добавить идею</button>
+    </div>
+  </nav>
+
+  <!-- Герой секция -->
+  <section id="home" class="hero">
+    <div class="hero-background">
+      <div class="gradient-orb orb-1"></div>
+      <div class="gradient-orb orb-2"></div>
+      <div class="gradient-orb orb-3"></div>
+    </div>
+    <div class="hero-content">
+      <h1 class="hero-title">
+        <span class="title-line">Сохраним</span>
+        <span class="title-line highlight">природу Беларуси</span>
+        <span class="title-line">вместе</span>
+      </h1>
+      <p class="hero-subtitle">
+        Изучайте экологические проблемы нашей страны, находите решения 
+        и делитесь своими идеями для создания зелёного будущего
+      </p>
+      <div class="hero-stats">
+        <div class="stat-card">
+          <div class="stat-number" id="problemsCount">0</div>
+          <div class="stat-label">проблем выявлено</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-number" id="solutionsCount">0</div>
+          <div class="stat-label">решений предложено</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-number" id="ideasCount">0</div>
+          <div class="stat-label">идей от людей</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Секция проблем -->
+  <section id="problems" class="section problems-section">
+    <div class="container">
+      <div class="section-header">
+        <h2 class="section-title">Экологические проблемы</h2>
+        <p class="section-description">
+          Беларусь сталкивается с рядом экологических вызовов. 
+          Понимание проблем — первый шаг к их решению.
+        </p>
+      </div>
+
+      <!-- Фильтры -->
+      <div class="filters">
+        <button class="filter-btn active" data-category="all">Все</button>
+        <button class="filter-btn" data-category="Вода">Вода</button>
+        <button class="filter-btn" data-category="Леса">Леса</button>
+        <button class="filter-btn" data-category="Воздух">Воздух</button>
+        <button class="filter-btn" data-category="Отходы">Отходы</button>
+        <button class="filter-btn" data-category="Радиация">Радиация</button>
+        <button class="filter-btn" data-category="Почва">Почва</button>
+      </div>
+
+      <!-- Грид с проблемами -->
+      <div class="problems-grid" id="problemsGrid">
+        <div class="loading">Загрузка проблем...</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Секция решений -->
+  <section id="solutions" class="section solutions-section">
+    <div class="container">
+      <div class="section-header">
+        <h2 class="section-title">Пути решения</h2>
+        <p class="section-description">
+          Каждый из нас может внести вклад в сохранение природы. 
+          Вот что вы можете сделать уже сегодня.
+        </p>
+      </div>
+
+      <!-- Фильтры для решений -->
+      <div class="solution-filters">
+        <select id="levelFilter" class="solution-select">
+          <option value="">Все уровни</option>
+          <option value="индивидуальный">Индивидуальный</option>
+          <option value="общественный">Общественный</option>
+          <option value="государственный">Государственный</option>
+        </select>
+        <select id="difficultyFilter" class="solution-select">
+          <option value="">Любая сложность</option>
+          <option value="легко">Легко</option>
+          <option value="средне">Средне</option>
+          <option value="сложно">Сложно</option>
+        </select>
+        <select id="impactFilter" class="solution-select">
+          <option value="">Любое влияние</option>
+          <option value="высокий">Высокое</option>
+          <option value="средний">Среднее</option>
+          <option value="низкий">Низкое</option>
+        </select>
+      </div>
+
+      <!-- Список решений -->
+      <div class="solutions-list" id="solutionsList">
+        <div class="loading">Загрузка решений...</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Секция идей пользователей -->
+  <section id="ideas" class="section ideas-section">
+    <div class="container">
+      <div class="section-header">
+        <h2 class="section-title">Идеи людей</h2>
+        <p class="section-description">
+          Делитесь своими идеями по улучшению экологической ситуации в Беларуси. 
+          Вместе мы сильнее!
+        </p>
+      </div>
+
+      <!-- Фильтры и сортировка для идей -->
+      <div class="ideas-controls">
+        <div class="ideas-filters">
+          <select id="ideaCategoryFilter" class="idea-select">
+            <option value="">Все категории</option>
+            <option value="Вода">Вода</option>
+            <option value="Леса">Леса</option>
+            <option value="Воздух">Воздух</option>
+            <option value="Отходы">Отходы</option>
+            <option value="Энергия">Энергия</option>
+            <option value="Транспорт">Транспорт</option>
+            <option value="Другое">Другое</option>
+          </select>
+          <select id="ideaSortFilter" class="idea-select">
+            <option value="date">Сначала новые</option>
+            <option value="votes">По популярности</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Грид с идеями -->
+      <div class="ideas-grid" id="ideasGrid">
+        <div class="loading">Загрузка идей...</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Модальное окно для добавления идеи -->
+  <div class="modal" id="ideaModal">
+    <div class="modal-overlay" id="modalOverlay"></div>
+    <div class="modal-content">
+      <button class="modal-close" id="modalClose">&times;</button>
+      <h2 class="modal-title">Поделитесь своей идеей</h2>
+      <form id="ideaForm" class="idea-form">
+        <div class="form-group">
+          <label for="authorName">Ваше имя</label>
+          <input type="text" id="authorName" name="authorName" required 
+                 placeholder="Александр Иванов" maxlength="100">
+        </div>
+        <div class="form-group">
+          <label for="ideaTitle">Заголовок идеи</label>
+          <input type="text" id="ideaTitle" name="ideaTitle" required 
+                 placeholder="Например: Создание экотроп в городских парках" maxlength="255">
+        </div>
+        <div class="form-group">
+          <label for="ideaCategory">Категория</label>
+          <select id="ideaCategory" name="ideaCategory" required>
+            <option value="">Выберите категорию</option>
+            <option value="Вода">Вода</option>
+            <option value="Леса">Леса</option>
+            <option value="Воздух">Воздух</option>
+            <option value="Отходы">Отходы</option>
+            <option value="Энергия">Энергия</option>
+            <option value="Транспорт">Транспорт</option>
+            <option value="Другое">Другое</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="ideaDescription">Описание идеи</label>
+          <textarea id="ideaDescription" name="ideaDescription" required 
+                    placeholder="Подробно опишите вашу идею по улучшению экологической ситуации..."
+                    rows="6"></textarea>
+        </div>
+        <div class="form-actions">
+          <button type="button" class="btn-secondary" id="cancelBtn">Отмена</button>
+          <button type="submit" class="btn-primary">Отправить идею</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Футер -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-content">
+        <div class="footer-section">
+          <h3>О проекте</h3>
+          <p>Платформа для изучения экологических проблем Беларуси и поиска решений на уровне общества.</p>
+        </div>
+        <div class="footer-section">
+          <h3>Контакты</h3>
+          <p>Email: info@ecobelarus.by</p>
+          <p>Телефон: +375 (29) 123-45-67</p>
+        </div>
+        <div class="footer-section">
+          <h3>Социальные сети</h3>
+          <div class="social-links">
+            <a href="#" class="social-link">Facebook</a>
+            <a href="#" class="social-link">Instagram</a>
+            <a href="#" class="social-link">Telegram</a>
+          </div>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>&copy; 2026 ЭкоБеларусь. Все права защищены.</p>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Модальное окно для детальной информации о проблеме -->
+  <div class="modal" id="problemModal">
+    <div class="modal-overlay" id="problemModalOverlay"></div>
+    <div class="modal-content modal-large">
+      <button class="modal-close" id="problemModalClose">&times;</button>
+      <div id="problemModalContent"></div>
+    </div>
+  </div>
+
+  <!-- ВАЖНО: Скрипты должны быть в конце, перед закрывающим тегом body -->
+  <script src="js/api.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
