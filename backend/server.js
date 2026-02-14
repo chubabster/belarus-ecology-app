@@ -4,15 +4,55 @@
 const express = require('express');
 const cors = require('cors');
 const bodyParser = require('body-parser');
-require('dotenv').config();
+const fs = require('fs');
+const path = require('path');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
 
 // Middleware
-app.use(cors()); // Разрешаем кросс-доменные запросы
-app.use(bodyParser.json()); // Парсинг JSON в теле запроса
+app.use(cors());
+app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
+
+// Функция инициализации базы данных
+async function initDatabase() {
+  const pool = require('./database/config');
+  
+  try {
+    // Проверяем есть ли таблицы
+    const checkTables = await pool.query(`
+      SELECT EXISTS (
+        SELECT FROM information_schema.tables 
+        WHERE table_schema = 'public' 
+        AND table_name = 'problems'
+      );
+    `);
+    
+    const tablesExist = checkTables.rows[0].exists;
+    
+    if (!tablesExist) {
+      console.log('📦 Таблицы не найдены, инициализируем базу данных...');
+      
+      // Читаем SQL файл
+      const sqlPath = path.join(__dirname, 'database', 'init_empty.sql');
+      const sql = fs.readFileSync(sqlPath, 'utf8');
+      
+      // Выполняем SQL
+      await pool.query(sql);
+      
+      console.log('✅ База данных успешно инициализирована!');
+    } else {
+      console.log('✅ Таблицы уже существуют, пропускаем инициализацию');
+    }
+  } catch (error) {
+    console.error('❌ Ошибка инициализации БД:', error.message);
+    // Не останавливаем сервер, продолжаем работу
+  }
+}
+
+// Инициализация БД при запуске
+initDatabase();
 
 // Подключение роутов
 const problemsRouter = require('./routes/problems');
