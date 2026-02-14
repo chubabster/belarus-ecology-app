@@ -1,24 +1,21 @@
 // database/config.js
 const { Pool } = require('pg');
 
-// Для Render.com используем DATABASE_URL из переменных окружения
-// Для локального запуска используем обычные настройки
-const pool = new Pool(
-  process.env.DATABASE_URL
-    ? {
-        connectionString: process.env.DATABASE_URL,
-        ssl: {
-          rejectUnauthorized: false
-        }
-      }
-    : {
-        user: 'postgres',
-        host: 'localhost',
-        database: 'belarus_ecology',
-        password: '',  // ваш локальный пароль
-        port: 5432,
-      }
-);
+// Для Render обязательно используем DATABASE_URL
+const connectionString = process.env.DATABASE_URL;
+
+if (!connectionString) {
+  console.error('❌ КРИТИЧЕСКАЯ ОШИБКА: DATABASE_URL не установлена!');
+  console.error('   Добавьте переменную окружения DATABASE_URL в настройках Render');
+  process.exit(1);
+}
+
+const pool = new Pool({
+  connectionString: connectionString,
+  ssl: {
+    rejectUnauthorized: false
+  }
+});
 
 pool.on('error', (err, client) => {
   console.error('❌ Ошибка клиента базы данных:', err);
