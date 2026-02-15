@@ -119,6 +119,7 @@
       margin-top: 1.5rem;
       padding-top: 1.5rem;
       border-top: 2px solid #f0f0f0;
+      flex-wrap: wrap;
     }
     
     .btn {
@@ -163,6 +164,16 @@
     .btn-review {
       background: linear-gradient(135deg, #f59e0b, #fbbf24);
       color: white;
+    }
+    
+    .btn-delete {
+      background: linear-gradient(135deg, #991b1b, #dc2626);
+      color: white;
+      margin-left: auto;
+    }
+    
+    .btn-delete:hover {
+      background: linear-gradient(135deg, #7f1d1d, #b91c1c);
     }
     
     .empty-state {
@@ -271,12 +282,10 @@
       
       let filtered = [...allIdeas];
       
-      // Фильтр по статусу
       if (statusFilter) {
         filtered = filtered.filter(idea => idea.status === statusFilter);
       }
       
-      // Сортировка
       if (sortFilter === 'votes') {
         filtered.sort((a, b) => b.votes - a.votes);
       } else {
@@ -334,6 +343,9 @@
             <button class="btn btn-convert" onclick="convertToProblem(${idea.id})">
               <span>🔄</span> В проблемы
             </button>
+            <button class="btn btn-delete" onclick="deleteIdea(${idea.id})">
+              <span>🗑️</span> Удалить
+            </button>
           </div>
         </div>
       `).join('');
@@ -343,10 +355,25 @@
       try {
         await API.updateIdea(ideaId, { status: newStatus });
         showNotification(`Статус изменён на: ${newStatus}`, 'success');
-        await loadIdeas(); // Перезагружаем список
+        await loadIdeas();
       } catch (error) {
         console.error('Ошибка:', error);
         showNotification('Ошибка при обновлении статуса', 'error');
+      }
+    }
+    
+    async function deleteIdea(ideaId) {
+      if (!confirm('Вы уверены что хотите удалить эту идею? Это действие нельзя отменить.')) {
+        return;
+      }
+      
+      try {
+        await API.deleteIdea(ideaId);
+        showNotification('Идея успешно удалена', 'success');
+        await loadIdeas();
+      } catch (error) {
+        console.error('Ошибка:', error);
+        showNotification('Ошибка при удалении идеи', 'error');
       }
     }
     
@@ -364,7 +391,6 @@
       }
       
       try {
-        // Создаём проблему
         await API.createProblem({
           title: idea.title,
           description: idea.description,
@@ -372,9 +398,7 @@
           severity: severity
         });
         
-        // Обновляем статус идеи
         await updateStatus(ideaId, 'реализована');
-        
         showNotification('Идея преобразована в проблему!', 'success');
       } catch (error) {
         console.error('Ошибка:', error);
@@ -402,11 +426,9 @@
       setTimeout(() => notification.remove(), 3000);
     }
     
-    // События фильтров
     document.getElementById('statusFilter').addEventListener('change', applyFilters);
     document.getElementById('sortFilter').addEventListener('change', applyFilters);
     
-    // Загрузка при старте
     loadIdeas();
   </script>
 </body>

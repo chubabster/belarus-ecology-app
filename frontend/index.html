@@ -3,433 +3,258 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Админ-панель | Экология Беларуси</title>
+  <title>Экология Беларуси | Зелёное будущее</title>
   <link rel="stylesheet" href="css/styles.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Manrope:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-  <style>
-    body {
-      background: #f8f9fa;
-      font-family: 'Manrope', sans-serif;
-    }
-    
-    .admin-container {
-      max-width: 1400px;
-      margin: 50px auto;
-      padding: 2rem;
-    }
-    
-    .admin-header {
-      background: linear-gradient(135deg, #1a3d2e, #2d6a4f);
-      color: white;
-      padding: 2rem;
-      border-radius: 20px;
-      margin-bottom: 2rem;
-    }
-    
-    .admin-header h1 {
-      font-family: 'Playfair Display', serif;
-      font-size: 2.5rem;
-      margin: 0 0 0.5rem 0;
-    }
-    
-    .filters-bar {
-      background: white;
-      padding: 1.5rem;
-      border-radius: 15px;
-      margin-bottom: 2rem;
-      display: flex;
-      gap: 1rem;
-      align-items: center;
-      box-shadow: 0 2px 10px rgba(0,0,0,0.05);
-    }
-    
-    .filter-label {
-      font-weight: 600;
-      color: #1a3d2e;
-    }
-    
-    .filter-select {
-      padding: 0.5rem 1rem;
-      border: 2px solid #e0e0e0;
-      border-radius: 8px;
-      font-size: 1rem;
-      cursor: pointer;
-      transition: border-color 0.3s;
-    }
-    
-    .filter-select:focus {
-      outline: none;
-      border-color: #52b788;
-    }
-    
-    .idea-admin-card {
-      background: white;
-      padding: 2rem;
-      margin-bottom: 1.5rem;
-      border-radius: 20px;
-      box-shadow: 0 2px 20px rgba(26, 61, 46, 0.08);
-      transition: transform 0.3s, box-shadow 0.3s;
-    }
-    
-    .idea-admin-card:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 4px 30px rgba(26, 61, 46, 0.12);
-    }
-    
-    .idea-header-admin {
-      display: flex;
-      justify-content: space-between;
-      align-items: start;
-      margin-bottom: 1rem;
-    }
-    
-    .idea-meta {
-      display: flex;
-      gap: 1rem;
-      flex-wrap: wrap;
-      margin-bottom: 1rem;
-    }
-    
-    .meta-item {
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-      padding: 0.5rem 1rem;
-      background: #f8f9fa;
-      border-radius: 8px;
-      font-size: 0.9rem;
-    }
-    
-    .status-badge {
-      padding: 0.5rem 1rem;
-      border-radius: 50px;
-      font-weight: 600;
-      font-size: 0.9rem;
-    }
-    
-    .status-новая { background: #e3f2fd; color: #1976d2; }
-    .status-на-рассмотрении { background: #fff3e0; color: #f57c00; }
-    .status-одобрена { background: #e8f5e9; color: #388e3c; }
-    .status-отклонена { background: #ffebee; color: #d32f2f; }
-    .status-реализована { background: #f3e5f5; color: #7b1fa2; }
-    
-    .admin-actions {
-      display: flex;
-      gap: 1rem;
-      margin-top: 1.5rem;
-      padding-top: 1.5rem;
-      border-top: 2px solid #f0f0f0;
-      flex-wrap: wrap;
-    }
-    
-    .btn {
-      padding: 0.75rem 1.5rem;
-      border: none;
-      border-radius: 50px;
-      cursor: pointer;
-      font-weight: 600;
-      font-size: 1rem;
-      transition: transform 0.2s, box-shadow 0.2s;
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-    }
-    
-    .btn:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-    }
-    
-    .btn:disabled {
-      opacity: 0.5;
-      cursor: not-allowed;
-      transform: none;
-    }
-    
-    .btn-approve {
-      background: linear-gradient(135deg, #52b788, #95d5b2);
-      color: white;
-    }
-    
-    .btn-reject {
-      background: linear-gradient(135deg, #d64545, #e97451);
-      color: white;
-    }
-    
-    .btn-convert {
-      background: linear-gradient(135deg, #4a7c9e, #74c0e3);
-      color: white;
-    }
-    
-    .btn-review {
-      background: linear-gradient(135deg, #f59e0b, #fbbf24);
-      color: white;
-    }
-    
-    .btn-delete {
-      background: linear-gradient(135deg, #991b1b, #dc2626);
-      color: white;
-      margin-left: auto;
-    }
-    
-    .btn-delete:hover {
-      background: linear-gradient(135deg, #7f1d1d, #b91c1c);
-    }
-    
-    .empty-state {
-      text-align: center;
-      padding: 4rem 2rem;
-      background: white;
-      border-radius: 20px;
-      box-shadow: 0 2px 20px rgba(26, 61, 46, 0.08);
-    }
-    
-    .empty-state h3 {
-      font-family: 'Playfair Display', serif;
-      font-size: 1.8rem;
-      color: #1a3d2e;
-      margin-bottom: 1rem;
-    }
-    
-    .notification {
-      position: fixed;
-      top: 20px;
-      right: 20px;
-      padding: 1rem 1.5rem;
-      border-radius: 12px;
-      color: white;
-      font-weight: 600;
-      box-shadow: 0 4px 20px rgba(0,0,0,0.2);
-      z-index: 10000;
-      animation: slideIn 0.3s ease;
-    }
-    
-    .notification.success {
-      background: linear-gradient(135deg, #52b788, #95d5b2);
-    }
-    
-    .notification.error {
-      background: linear-gradient(135deg, #d64545, #e97451);
-    }
-    
-    @keyframes slideIn {
-      from {
-        transform: translateX(400px);
-        opacity: 0;
-      }
-      to {
-        transform: translateX(0);
-        opacity: 1;
-      }
-    }
-    
-    .loading {
-      text-align: center;
-      padding: 3rem;
-      font-size: 1.2rem;
-      color: #52b788;
-    }
-  </style>
 </head>
 <body>
-  <div class="admin-container">
-    <div class="admin-header">
-      <h1>🛡️ Админ-панель</h1>
-      <p style="margin: 0; opacity: 0.9;">Модерация идей пользователей</p>
+  <!-- Навигация -->
+  <nav class="navbar">
+    <div class="nav-container">
+      <div class="nav-brand">
+        <svg class="logo-icon" viewBox="0 0 40 40" fill="none">
+          <circle cx="20" cy="20" r="18" stroke="currentColor" stroke-width="2"/>
+          <path d="M20 8 L20 32 M12 20 L28 20" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+          <path d="M14 12 Q20 16 26 12 M14 28 Q20 24 26 28" stroke="currentColor" stroke-width="1.5" fill="none"/>
+        </svg>
+        <span class="brand-text">ЭкоБеларусь</span>
+      </div>
+      <ul class="nav-menu">
+        <li><a href="#home" class="nav-link active">Главная</a></li>
+        <li><a href="#problems" class="nav-link">Проблемы</a></li>
+        <li><a href="#solutions" class="nav-link">Решения</a></li>
+        <li><a href="#ideas" class="nav-link">Идеи</a></li>
+      </ul>
+      <button class="add-idea-btn" id="addIdeaBtn">Добавить идею</button>
     </div>
-    
-    <div class="filters-bar">
-      <span class="filter-label">Фильтр по статусу:</span>
-      <select id="statusFilter" class="filter-select">
-        <option value="">Все идеи</option>
-        <option value="новая">Новые</option>
-        <option value="на рассмотрении">На рассмотрении</option>
-        <option value="одобрена">Одобренные</option>
-        <option value="отклонена">Отклонённые</option>
-        <option value="реализована">Реализованные</option>
-      </select>
-      
-      <span class="filter-label" style="margin-left: 2rem;">Сортировка:</span>
-      <select id="sortFilter" class="filter-select">
-        <option value="date">По дате</option>
-        <option value="votes">По популярности</option>
-      </select>
+  </nav>
+
+  <!-- Герой секция -->
+  <section id="home" class="hero">
+    <div class="hero-background">
+      <div class="gradient-orb orb-1"></div>
+      <div class="gradient-orb orb-2"></div>
+      <div class="gradient-orb orb-3"></div>
     </div>
-    
-    <div id="ideasList">
-      <div class="loading">Загрузка идей...</div>
+    <div class="hero-content">
+      <h1 class="hero-title">
+        <span class="title-line">Сохраним</span>
+        <span class="title-line highlight">природу Беларуси</span>
+        <span class="title-line">вместе</span>
+      </h1>
+      <p class="hero-subtitle">
+        Изучайте экологические проблемы нашей страны, находите решения 
+        и делитесь своими идеями для создания зелёного будущего
+      </p>
+      <div class="hero-stats">
+        <div class="stat-card">
+          <div class="stat-number" id="problemsCount">0</div>
+          <div class="stat-label">проблем выявлено</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-number" id="solutionsCount">0</div>
+          <div class="stat-label">решений предложено</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-number" id="ideasCount">0</div>
+          <div class="stat-label">идей от людей</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Секция проблем -->
+  <section id="problems" class="section problems-section">
+    <div class="container">
+      <div class="section-header">
+        <h2 class="section-title">Экологические проблемы</h2>
+        <p class="section-description">
+          Беларусь сталкивается с рядом экологических вызовов. 
+          Понимание проблем — первый шаг к их решению.
+        </p>
+      </div>
+
+      <!-- Фильтры -->
+      <div class="filters">
+        <button class="filter-btn active" data-category="all">Все</button>
+        <button class="filter-btn" data-category="Вода">Вода</button>
+        <button class="filter-btn" data-category="Леса">Леса</button>
+        <button class="filter-btn" data-category="Воздух">Воздух</button>
+        <button class="filter-btn" data-category="Отходы">Отходы</button>
+        <button class="filter-btn" data-category="Радиация">Радиация</button>
+        <button class="filter-btn" data-category="Почва">Почва</button>
+      </div>
+
+      <!-- Грид с проблемами -->
+      <div class="problems-grid" id="problemsGrid">
+        <div class="loading">Загрузка проблем...</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Секция решений -->
+  <section id="solutions" class="section solutions-section">
+    <div class="container">
+      <div class="section-header">
+        <h2 class="section-title">Пути решения</h2>
+        <p class="section-description">
+          Каждый из нас может внести вклад в сохранение природы. 
+          Вот что вы можете сделать уже сегодня.
+        </p>
+      </div>
+
+      <!-- Фильтры для решений -->
+      <div class="solution-filters">
+        <select id="levelFilter" class="solution-select">
+          <option value="">Все уровни</option>
+          <option value="индивидуальный">Индивидуальный</option>
+          <option value="общественный">Общественный</option>
+          <option value="государственный">Государственный</option>
+        </select>
+        <select id="difficultyFilter" class="solution-select">
+          <option value="">Любая сложность</option>
+          <option value="легко">Легко</option>
+          <option value="средне">Средне</option>
+          <option value="сложно">Сложно</option>
+        </select>
+        <select id="impactFilter" class="solution-select">
+          <option value="">Любое влияние</option>
+          <option value="высокий">Высокое</option>
+          <option value="средний">Среднее</option>
+          <option value="низкий">Низкое</option>
+        </select>
+      </div>
+
+      <!-- Список решений -->
+      <div class="solutions-list" id="solutionsList">
+        <div class="loading">Загрузка решений...</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Секция идей пользователей -->
+  <section id="ideas" class="section ideas-section">
+    <div class="container">
+      <div class="section-header">
+        <h2 class="section-title">Идеи людей</h2>
+        <p class="section-description">
+          Делитесь своими идеями по улучшению экологической ситуации в Беларуси. 
+          Вместе мы сильнее!
+        </p>
+      </div>
+
+      <!-- Фильтры и сортировка для идей -->
+      <div class="ideas-controls">
+        <div class="ideas-filters">
+          <select id="ideaCategoryFilter" class="idea-select">
+            <option value="">Все категории</option>
+            <option value="Вода">Вода</option>
+            <option value="Леса">Леса</option>
+            <option value="Воздух">Воздух</option>
+            <option value="Отходы">Отходы</option>
+            <option value="Энергия">Энергия</option>
+            <option value="Транспорт">Транспорт</option>
+            <option value="Другое">Другое</option>
+          </select>
+          <select id="ideaSortFilter" class="idea-select">
+            <option value="date">Сначала новые</option>
+            <option value="votes">По популярности</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Грид с идеями -->
+      <div class="ideas-grid" id="ideasGrid">
+        <div class="loading">Загрузка идей...</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Модальное окно для добавления идеи -->
+  <div class="modal" id="ideaModal">
+    <div class="modal-overlay" id="modalOverlay"></div>
+    <div class="modal-content">
+      <button class="modal-close" id="modalClose">&times;</button>
+      <h2 class="modal-title">Поделитесь своей идеей</h2>
+      <form id="ideaForm" class="idea-form">
+        <div class="form-group">
+          <label for="authorName">Ваше имя</label>
+          <input type="text" id="authorName" name="authorName" required 
+                 placeholder="Александр Иванов" maxlength="100">
+        </div>
+        <div class="form-group">
+          <label for="ideaTitle">Заголовок идеи</label>
+          <input type="text" id="ideaTitle" name="ideaTitle" required 
+                 placeholder="Например: Создание экотроп в городских парках" maxlength="255">
+        </div>
+        <div class="form-group">
+          <label for="ideaCategory">Категория</label>
+          <select id="ideaCategory" name="ideaCategory" required>
+            <option value="">Выберите категорию</option>
+            <option value="Вода">Вода</option>
+            <option value="Леса">Леса</option>
+            <option value="Воздух">Воздух</option>
+            <option value="Отходы">Отходы</option>
+            <option value="Энергия">Энергия</option>
+            <option value="Транспорт">Транспорт</option>
+            <option value="Другое">Другое</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="ideaDescription">Описание идеи</label>
+          <textarea id="ideaDescription" name="ideaDescription" required 
+                    placeholder="Подробно опишите вашу идею по улучшению экологической ситуации..."
+                    rows="6"></textarea>
+        </div>
+        <div class="form-actions">
+          <button type="button" class="btn-secondary" id="cancelBtn">Отмена</button>
+          <button type="submit" class="btn-primary">Отправить идею</button>
+        </div>
+      </form>
     </div>
   </div>
 
-  <script src="js/api.js"></script>
-  <script>
-    let allIdeas = [];
-    
-    async function loadIdeas() {
-      try {
-        const response = await API.getIdeas({ sort: 'date', order: 'desc' });
-        allIdeas = response;
-        applyFilters();
-      } catch (error) {
-        console.error('Ошибка загрузки идей:', error);
-        showNotification('Ошибка загрузки идей', 'error');
-      }
-    }
-    
-    function applyFilters() {
-      const statusFilter = document.getElementById('statusFilter').value;
-      const sortFilter = document.getElementById('sortFilter').value;
-      
-      let filtered = [...allIdeas];
-      
-      if (statusFilter) {
-        filtered = filtered.filter(idea => idea.status === statusFilter);
-      }
-      
-      if (sortFilter === 'votes') {
-        filtered.sort((a, b) => b.votes - a.votes);
-      } else {
-        filtered.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
-      }
-      
-      renderIdeas(filtered);
-    }
-    
-    function renderIdeas(ideas) {
-      const container = document.getElementById('ideasList');
-      
-      if (ideas.length === 0) {
-        container.innerHTML = `
-          <div class="empty-state">
-            <h3>📭 Нет идей для отображения</h3>
-            <p>Попробуйте изменить фильтры</p>
-          </div>
-        `;
-        return;
-      }
-      
-      container.innerHTML = ideas.map(idea => `
-        <div class="idea-admin-card" data-id="${idea.id}">
-          <div class="idea-header-admin">
-            <div>
-              <h3 style="font-family: 'Playfair Display', serif; font-size: 1.5rem; margin: 0 0 0.5rem 0; color: #1a3d2e;">
-                ${idea.title}
-              </h3>
-              <div class="idea-meta">
-                <span class="meta-item">👤 ${idea.author_name}</span>
-                <span class="meta-item">📁 ${idea.category}</span>
-                <span class="meta-item">👍 ${idea.votes} голосов</span>
-                <span class="meta-item">📅 ${formatDate(idea.created_at)}</span>
-              </div>
-            </div>
-            <span class="status-badge status-${idea.status.replace(' ', '-')}">${idea.status}</span>
-          </div>
-          
-          <p style="color: #555; line-height: 1.6; margin: 1rem 0;">${idea.description}</p>
-          
-          <div class="admin-actions">
-            <button class="btn btn-review" onclick="updateStatus(${idea.id}, 'на рассмотрении')" 
-                    ${idea.status === 'на рассмотрении' ? 'disabled' : ''}>
-              <span>⏳</span> На рассмотрение
-            </button>
-            <button class="btn btn-approve" onclick="updateStatus(${idea.id}, 'одобрена')"
-                    ${idea.status === 'одобрена' ? 'disabled' : ''}>
-              <span>✅</span> Одобрить
-            </button>
-            <button class="btn btn-reject" onclick="updateStatus(${idea.id}, 'отклонена')"
-                    ${idea.status === 'отклонена' ? 'disabled' : ''}>
-              <span>❌</span> Отклонить
-            </button>
-            <button class="btn btn-convert" onclick="convertToProblem(${idea.id})">
-              <span>🔄</span> В проблемы
-            </button>
-            <button class="btn btn-delete" onclick="deleteIdea(${idea.id})">
-              <span>🗑️</span> Удалить
-            </button>
+  <!-- Футер -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-content">
+        <div class="footer-section">
+          <h3>О проекте</h3>
+          <p>Платформа для изучения экологических проблем Беларуси и поиска решений на уровне общества.</p>
+        </div>
+        <div class="footer-section">
+          <h3>Контакты</h3>
+          <p>Email: info@ecobelarus.by</p>
+          <p>Телефон: +375 (29) 123-45-67</p>
+        </div>
+        <div class="footer-section">
+          <h3>Социальные сети</h3>
+          <div class="social-links">
+            <a href="#" class="social-link">Facebook</a>
+            <a href="#" class="social-link">Instagram</a>
+            <a href="#" class="social-link">Telegram</a>
           </div>
         </div>
-      `).join('');
-    }
-    
-    async function updateStatus(ideaId, newStatus) {
-      try {
-        await API.updateIdea(ideaId, { status: newStatus });
-        showNotification(`Статус изменён на: ${newStatus}`, 'success');
-        await loadIdeas();
-      } catch (error) {
-        console.error('Ошибка:', error);
-        showNotification('Ошибка при обновлении статуса', 'error');
-      }
-    }
-    
-    async function deleteIdea(ideaId) {
-      if (!confirm('Вы уверены что хотите удалить эту идею? Это действие нельзя отменить.')) {
-        return;
-      }
-      
-      try {
-        await API.deleteIdea(ideaId);
-        showNotification('Идея успешно удалена', 'success');
-        await loadIdeas();
-      } catch (error) {
-        console.error('Ошибка:', error);
-        showNotification('Ошибка при удалении идеи', 'error');
-      }
-    }
-    
-    async function convertToProblem(ideaId) {
-      const idea = allIdeas.find(i => i.id === ideaId);
-      if (!idea) return;
-      
-      const severity = prompt('Уровень серьёзности (низкая/средняя/высокая/критическая):', 'средняя');
-      if (!severity) return;
-      
-      const validSeverities = ['низкая', 'средняя', 'высокая', 'критическая'];
-      if (!validSeverities.includes(severity)) {
-        showNotification('Неверный уровень серьёзности', 'error');
-        return;
-      }
-      
-      try {
-        await API.createProblem({
-          title: idea.title,
-          description: idea.description,
-          category: idea.category,
-          severity: severity
-        });
-        
-        await updateStatus(ideaId, 'реализована');
-        showNotification('Идея преобразована в проблему!', 'success');
-      } catch (error) {
-        console.error('Ошибка:', error);
-        showNotification('Ошибка при создании проблемы', 'error');
-      }
-    }
-    
-    function formatDate(dateString) {
-      const date = new Date(dateString);
-      return date.toLocaleString('ru-RU', {
-        day: 'numeric',
-        month: 'long',
-        year: 'numeric',
-        hour: '2-digit',
-        minute: '2-digit'
-      });
-    }
-    
-    function showNotification(message, type = 'success') {
-      const notification = document.createElement('div');
-      notification.className = `notification ${type}`;
-      notification.textContent = message;
-      document.body.appendChild(notification);
-      
-      setTimeout(() => notification.remove(), 3000);
-    }
-    
-    document.getElementById('statusFilter').addEventListener('change', applyFilters);
-    document.getElementById('sortFilter').addEventListener('change', applyFilters);
-    
-    loadIdeas();
-  </script>
+      </div>
+      <div class="footer-bottom">
+        <p>&copy; 2026 ЭкоБеларусь. Все права защищены.</p>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Модальное окно для детальной информации о проблеме -->
+  <div class="modal" id="problemModal">
+    <div class="modal-overlay" id="problemModalOverlay"></div>
+    <div class="modal-content modal-large">
+      <button class="modal-close" id="problemModalClose">&times;</button>
+      <div id="problemModalContent"></div>
+    </div>
+  </div>
+
+  <!-- ВАЖНО: Скрипты должны быть в конце, перед закрывающим тегом body -->
+  <script src="js/api.js"></script>
+  <script src="js/app.js"></script>
 </body>
 </html>
