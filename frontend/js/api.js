@@ -29,6 +29,19 @@ const API = {
     }
   },
 
+// Удалить идею (для админки)
+  async deleteIdea(id) {
+    const response = await fetch(`${API_BASE_URL}/ideas/${id}`, {
+      method: 'DELETE',
+    });
+    
+    if (!response.ok) {
+      throw new Error('Ошибка при удалении идеи');
+    }
+    
+    return response.json();
+  },
+
   /**
    * Получить проблему по ID
    * @param {number} id - ID проблемы

@@ -14,6 +14,38 @@ const pool = require('../database/config');
  *   - sort: сортировка (votes, date)
  *   - order: порядок (asc, desc)
  */
+// DELETE /api/ideas/:id - Удаление идеи
+router.delete('/:id', async (req, res) => {
+  const { id } = req.params;
+  
+  try {
+    const result = await pool.query(
+      'DELETE FROM ideas WHERE id = $1 RETURNING *',
+      [id]
+    );
+    
+    if (result.rows.length === 0) {
+      return res.status(404).json({
+        success: false,
+        error: 'Идея не найдена'
+      });
+    }
+    
+    res.json({
+      success: true,
+      data: result.rows[0],
+      message: 'Идея успешно удалена'
+    });
+  } catch (error) {
+    console.error('Ошибка при удалении идеи:', error);
+    res.status(500).json({
+      success: false,
+      error: 'Ошибка при удалении идеи',
+      details: error.message
+    });
+  }
+});
+
 router.get('/', async (req, res) => {
   try {
     const { category, status, sort = 'date', order = 'desc' } = req.query;
